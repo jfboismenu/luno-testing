@@ -150,29 +150,21 @@ int main(int argc, char** argv)
             }
         }).execute();
     }
-
-    {
-        std::cout << "Parametrized" << std::endl;
-        Test(
-            "parametrized", 
-            [](int& value) { std::cout << value << std::endl; }
-        ).execute();
-    }
-
     std::function<void()> func((myfunctor()));
     func();
     
     return 0;
 }
 
-Test("Something") << []() {
-};
 
-Skip() << Test("something") << Parametrized<int>({1,2 3}) << [](const int& value) {
-};
+// Test("Something") << []() {
+// };
 
-SkipIf([](){return true;}) << Test("Something") << []() {};
+// Skip() << Parametrized<int>({1,2 3}) << Test<int>("something", [](const int& value) {
+// };
 
-Fail() << Test("Something", []() {
+// SkipIf([](){return true;}) << Test("Something") << []() {};
 
-};
+// Fail() << Test("Something", []() {
+
+// };
