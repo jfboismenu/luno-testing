@@ -1,0 +1,64 @@
+# MIT License
+#
+# Copyright (c) 2020 Jean-François Boismenu
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+exclude: "(docker/source.*)|(\\.vscode)"
+repos:
+  - repo: https://github.com/Lucas-C/pre-commit-hooks
+    rev: v1.1.7
+    hooks:
+    - id: forbid-crlf
+    - id: remove-crlf
+    - id: forbid-tabs
+    - id: remove-tabs
+    # - id: insert-license
+    #   files: (\.yaml$)|(\.yml$)|(\.sh$)|(\.py$)|(\.cmake$)|(Makefile)
+    # - id: insert-license
+    #   files: (\.c$)|(\.h$)|(\.cpp$)|(\.hpp)
+    #   args: [--comment-style, //]
+    # - id: insert-license
+    #   files: (\.asm$)
+    #   args: [--comment-style, ;]
+
+  - repo: https://github.com/pocc/pre-commit-hooks
+    rev: v1.1.1
+    hooks:
+    - id: clang-format
+      args: [-i]
+    # - id: clang-tidy
+    #   args: [-warnings-as-errors=*, -p=build, --extra-arg=--stdlib=libc++]
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.1.0
+    hooks:
+    - id: check-ast
+      language_version: python3
+    - id: check-case-conflict
+    - id: check-executables-have-shebangs
+    - id: check-merge-conflict
+    - id: end-of-file-fixer
+    - id: requirements-txt-fixer
+    - id: trailing-whitespace
+  - repo: https://github.com/ambv/black
+    rev: 19.10b0
+    hooks:
+    - id: black
+      language_version: python3
