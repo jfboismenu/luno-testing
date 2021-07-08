@@ -23,99 +23,71 @@
 #include <array>
 #include <iostream>
 #include <luno-testing/fixture.hpp>
+#include <luno-testing/parametrized.hpp>
+#include <luno-testing/predicates.hpp>
+#include <luno-testing/test.hpp>
 #include <vector>
 
-class Test {
-public:
-  Test(const std::string &name, std::function<void()> test)
-      : _name(name), _test(test) {}
-  void execute() { _test(); }
-
-private:
-  std::function<void()> _test;
-  std::string _name;
-};
-
-template <typename T> class Parametrized {
-public:
-  Parametrized(const std::string &name, std::initializer_list<T> &&list,
-               std::function<void(T &)> test)
-      : _name(name), _list(list), _test(test) {}
-
-  void operator()() {
-    for (auto &value : _list) {
-      _test(value);
-    }
-  }
-
-private:
-  std::string _name;
-  std::function<void(T &)> _test;
-  std::vector<T> _list;
-};
-
 struct myfunctor {
-  void operator()() { std::cout << "from myfunctor" << std::endl; }
+    void operator()() {
+        std::cout << "from myfunctor" << std::endl;
+    }
 };
 
 int main(int argc, char **argv) {
-  {
-    Fixture<int> fixture(
-        []() { return 1; },
-        [](int &integer) { std::cout << integer << std::endl; });
+    luno_expect(And(1, 2));
+    luno_expect(And(0, 2));
 
-    fixture() = 3;
-    std::cout << "end of scope" << std::endl;
-  }
-  {
-    Fixture<int> fixture(
-        []() { return 1; },
-        [](int &integer) { std::cout << integer << std::endl; });
+    {
+        Fixture<int> fixture([]() { return 1; },
+                             [](int &integer) { std::cout << integer << std::endl; });
 
-    std::cout << "Testing test that modifies fixture value" << std::endl;
+        fixture() = 3;
+        std::cout << "end of scope" << std::endl;
+    }
+    {
+        Fixture<int> fixture([]() { return 1; },
+                             [](int &integer) { std::cout << integer << std::endl; });
 
-    Test("something", [fixture]() {
-      std::cout << fixture() << std::endl;
-      fixture() = 3;
-    }).execute();
+        std::cout << "Testing test that modifies fixture value" << std::endl;
 
-    std::cout << "Testing test that follows test that modified value"
-              << std::endl;
-    Test("something_else", [fixture]() {
-      std::cout << fixture() << std::endl;
-    }).execute();
-  }
-  {
-    std::cout << "Testing fixture with constant." << std::endl;
-    Fixture<int> fixture(2);
-    Test("someting_else", [fixture]() {
-      std::cout << fixture() << std::endl;
-    }).execute();
-  }
+        Test("something", [fixture]() {
+            std::cout << fixture() << std::endl;
+            fixture() = 3;
+        }).execute();
 
-  {
-    std::cout << "Testing fixture with constant array." << std::endl;
-    Fixture<std::array<int, 4>> fixture({1, 2, 3, 4});
-    Test("someting_else", [fixture]() {
-      for (const auto &value : fixture()) {
-        std::cout << value << std::endl;
-      }
-    }).execute();
-  }
+        std::cout << "Testing test that follows test that modified value" << std::endl;
+        Test("something_else", [fixture]() { std::cout << fixture() << std::endl; }).execute();
+    }
+    {
+        std::cout << "Testing fixture with constant." << std::endl;
+        Fixture<int> fixture(2);
+        Test("someting_else", [fixture]() { std::cout << fixture() << std::endl; }).execute();
+    }
 
-  {
-    std::cout << "Testing fixture with constant vector." << std::endl;
-    Fixture<std::vector<int>> fixture({1, 2, 3, 4});
-    Test("someting_else", [fixture]() {
-      for (const auto &value : fixture()) {
-        std::cout << value << std::endl;
-      }
-    }).execute();
-  }
-  std::function<void()> func((myfunctor()));
-  func();
+    {
+        std::cout << "Testing fixture with constant array." << std::endl;
+        Fixture<std::array<int, 4>> fixture({1, 2, 3, 4});
+        Test("someting_else", [fixture]() {
+            for (const auto &value : fixture()) {
+                std::cout << value << std::endl;
+            }
+        }).execute();
+    }
 
-  return 0;
+    {
+        std::cout << "Testing fixture with constant vector." << std::endl;
+        Fixture<std::vector<int>> fixture({1, 2, 3, 4});
+        Test("someting_else", [fixture]() {
+            for (const auto &value : fixture()) {
+                std::cout << value << std::endl;
+            }
+        }).execute();
+    }
+    std::function<void()> func((myfunctor()));
+    func();
+
+    return 0;
 }
 
 // Test("Something") << []() {

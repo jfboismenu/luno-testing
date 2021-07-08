@@ -23,37 +23,24 @@
 #pragma once
 
 #include <functional>
-#include <optional>
+#include <string>
+#include <vector>
 
-template <typename T> class Fixture {
+template <typename T> class Parametrized {
 public:
-    Fixture(std::function<T()> pre) : Fixture(pre, [](T &) {}) {
+    Parametrized(const std::string &name, std::initializer_list<T> &&list,
+                 std::function<void(T &)> test)
+        : _name(name), _list(list), _test(test) {
     }
 
-    Fixture(T &&value) : Fixture([value]() { return value; }) {
-    }
-
-    Fixture(std::function<T()> pre, std::function<void(T &)> post) : _pre(pre), _post(post) {
-    }
-
-    Fixture(const Fixture<T> &other) : Fixture(other._pre, other._post) {
-    }
-
-    ~Fixture() {
-        if (_value) {
-            _post(*_value);
+    void operator()() {
+        for (auto &value : _list) {
+            _test(value);
         }
-    }
-
-    T &operator()() const {
-        if (!_value) {
-            _value = _pre();
-        }
-        return *_value;
     }
 
 private:
-    mutable std::optional<T> _value;
-    std::function<T()> _pre;
-    std::function<void(T &)> _post;
+    std::string _name;
+    std::function<void(T &)> _test;
+    std::vector<T> _list;
 };

@@ -23,37 +23,17 @@
 #pragma once
 
 #include <functional>
-#include <optional>
+#include <string>
 
-template <typename T> class Fixture {
+class Test {
 public:
-    Fixture(std::function<T()> pre) : Fixture(pre, [](T &) {}) {
+    Test(const std::string &name, std::function<void()> test) : _name(name), _test(test) {
     }
-
-    Fixture(T &&value) : Fixture([value]() { return value; }) {
-    }
-
-    Fixture(std::function<T()> pre, std::function<void(T &)> post) : _pre(pre), _post(post) {
-    }
-
-    Fixture(const Fixture<T> &other) : Fixture(other._pre, other._post) {
-    }
-
-    ~Fixture() {
-        if (_value) {
-            _post(*_value);
-        }
-    }
-
-    T &operator()() const {
-        if (!_value) {
-            _value = _pre();
-        }
-        return *_value;
+    void execute() {
+        _test();
     }
 
 private:
-    mutable std::optional<T> _value;
-    std::function<T()> _pre;
-    std::function<void(T &)> _post;
+    std::function<void()> _test;
+    std::string _name;
 };
