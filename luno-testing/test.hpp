@@ -22,8 +22,12 @@
 
 #pragma once
 
+#include <luno-testing/common.hpp>
+
 #include <functional>
 #include <string>
+
+LUNO_TESTING_NAMESPACE_START
 
 class Test {
 public:
@@ -37,3 +41,5 @@ private:
     std::function<void()> _test;
     std::string _name;
 };
+
+LUNO_TESTING_NAMESPACE_END

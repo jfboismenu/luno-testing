@@ -22,9 +22,13 @@
 
 #pragma once
 
+#include <luno-testing/common.hpp>
+
 #include <functional>
 #include <string>
 #include <vector>
+
+LUNO_TESTING_NAMESPACE_START
 
 template <typename T> class Parametrized {
 public:
@@ -44,3 +48,5 @@ private:
     std::function<void(T &)> _test;
     std::vector<T> _list;
 };
+
+LUNO_TESTING_NAMESPACE_END

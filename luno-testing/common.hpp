@@ -22,44 +22,9 @@
 
 #pragma once
 
-#include <luno-testing/common.hpp>
-
-#include <functional>
-#include <optional>
-
-LUNO_TESTING_NAMESPACE_START
-
-template <typename T> class Fixture {
-public:
-    Fixture(std::function<T()> pre) : Fixture(pre, [](T &) {}) {
+#define LUNO_TESTING_NAMESPACE_START                                                               \
+    namespace luno {                                                                               \
+    namespace testing {
+#define LUNO_TESTING_NAMESPACE_END                                                                 \
+    }                                                                                              \
     }
-
-    Fixture(T &&value) : Fixture([value]() { return value; }) {
-    }
-
-    Fixture(std::function<T()> pre, std::function<void(T &)> post) : _pre(pre), _post(post) {
-    }
-
-    Fixture(const Fixture<T> &other) : Fixture(other._pre, other._post) {
-    }
-
-    ~Fixture() {
-        if (_value) {
-            _post(*_value);
-        }
-    }
-
-    T &operator()() const {
-        if (!_value) {
-            _value = _pre();
-        }
-        return *_value;
-    }
-
-private:
-    mutable std::optional<T> _value;
-    std::function<T()> _pre;
-    std::function<void(T &)> _post;
-};
-
-LUNO_TESTING_NAMESPACE_END

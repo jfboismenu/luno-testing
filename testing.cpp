@@ -27,6 +27,7 @@
 #include <luno-testing/predicates.hpp>
 #include <luno-testing/test.hpp>
 #include <vector>
+using namespace luno::testing;
 
 struct myfunctor {
     void operator()() {
@@ -36,6 +37,7 @@ struct myfunctor {
 
 int main(int argc, char **argv) {
     luno_expect(And(1, 2));
+    luno_expect(0);
     luno_expect(And(0, 2));
 
     {
@@ -89,16 +91,3 @@ int main(int argc, char **argv) {
 
     return 0;
 }
-
-// Test("Something") << []() {
-// };
-
-// Skip() << Parametrized<int>({1,2 3}) << Test<int>("something", [](const int&
-// value) {
-// };
-
-// SkipIf([](){return true;}) << Test("Something") << []() {};
-
-// Fail() << Test("Something", []() {
-
-// };

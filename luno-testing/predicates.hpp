@@ -20,9 +20,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#pragma once
+
+#include <luno-testing/common.hpp>
 #include <sstream>
 
-#pragma once
+LUNO_TESTING_NAMESPACE_START
 
 class Predicate {
 public:
@@ -48,6 +51,7 @@ private:
     const Right &_right;
 };
 
+namespace details {
 template <typename Left, typename Right> class AndT : public BinaryPredicate<Left, Right> {
 public:
     AndT(const Left &left, const Right &right) : BinaryPredicate<Left, Right>(left, right) {
@@ -61,10 +65,11 @@ public:
         return static_cast<bool>(this->left()) && static_cast<bool>(this->right());
     }
 };
+} // namespace details
 
 template <typename Left, typename Right>
-auto And(const Left &left, const Right &right) -> AndT<Left, Right> {
-    return AndT<Left, Right>(left, right);
+auto And(const Left &left, const Right &right) -> details::AndT<Left, Right> {
+    return details::AndT<Left, Right>(left, right);
 }
 
 template <typename Left, typename Right>
@@ -74,9 +79,17 @@ std::ostream &operator<<(std::ostream &os, const BinaryPredicate<Left, Right> &p
 }
 
 namespace details {
-template <typename Left, typename Right>
-void expect(const BinaryPredicate<Left, Right> &pred, const char *filename, int line_no) {
-    if (!pred) {
+// template <typename Left, typename Right>
+// void expect(const BinaryPredicate<Left, Right> &pred, const char *filename, int line_no) {
+//     if (!pred) {
+//         std::ostringstream os;
+//         os << "Predicate failure in " << filename << " at line " << line_no << ": " << pred;
+//         throw std::runtime_error(os.str());
+//     }
+// }
+
+template <typename T> void expect(const T &pred, const char *filename, int line_no) {
+    if (!static_cast<bool>(pred)) {
         std::ostringstream os;
         os << "Predicate failure in " << filename << " at line " << line_no << ": " << pred;
         throw std::runtime_error(os.str());
@@ -85,3 +98,5 @@ void expect(const BinaryPredicate<Left, Right> &pred, const char *filename, int 
 } // namespace details
 
 #define luno_expect(pred) details::expect(pred, __FILE__, __LINE__)
+
+LUNO_TESTING_NAMESPACE_END
